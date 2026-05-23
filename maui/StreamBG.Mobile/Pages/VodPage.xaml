@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vlc="clr-namespace:LibVLCSharp.MAUI;assembly=LibVLCSharp.MAUI"
+             xmlns:vm="clr-namespace:StreamBG.Mobile.ViewModels"
+             x:Class="StreamBG.Mobile.Pages.VodPage"
+             x:DataType="vm:VodViewModel"
+             BackgroundColor="#0e0e10"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Video player -->
+        <Grid Grid.Row="0" HeightRequest="240" BackgroundColor="#000">
+            <vlc:VideoView x:Name="VideoView" MediaPlayer="{Binding MediaPlayer}"/>
+
+            <!-- Back button overlay -->
+            <Border BackgroundColor="#88000000" StrokeShape="RoundRectangle 8"
+                    Padding="10,6" HorizontalOptions="Start" VerticalOptions="Start" Margin="10">
+                <Label Text="←" TextColor="White" FontSize="18">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </Border>
+        </Grid>
+
+        <!-- VOD info + comments -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="0">
+
+                <!-- Title + meta -->
+                <VerticalStackLayout Padding="14,12" BackgroundColor="#18181b" Spacing="8">
+                    <Label Text="{Binding Vod.Title}" TextColor="#efeff1"
+                           FontSize="17" FontAttributes="Bold"/>
+                    <HorizontalStackLayout Spacing="12">
+                        <Label Text="{Binding Vod.ViewCount, StringFormat='{0:N0} гледания'}"
+                               TextColor="#adadb8" FontSize="12"/>
+                        <Label Text="{Binding Vod.CreatedAt, StringFormat='{0:dd.MM.yyyy}'}"
+                               TextColor="#5a5a6a" FontSize="12"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Streamer row -->
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Margin="0,4,0,0">
+                        <Border Grid.Column="0" BackgroundColor="#a970ff"
+                                StrokeShape="RoundRectangle 999" WidthRequest="36" HeightRequest="36">
+                            <Label Text="{Binding Vod.Username, Converter={StaticResource InitialConverter}}"
+                                   TextColor="White" FontSize="14" FontAttributes="Bold"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <Label Grid.Column="1" Text="{Binding Vod.Username}"
+                               TextColor="#efeff1" FontSize="14" FontAttributes="Bold"
+                               VerticalOptions="Center"/>
+                        <Button Grid.Column="2" Text="+ Последвай"
+                                BackgroundColor="#a970ff" TextColor="White"
+                                FontSize="12" FontAttributes="Bold"
+                                CornerRadius="8" Padding="12,6"/>
+                    </Grid>
+
+                    <!-- Description -->
+                    <Label Text="{Binding Vod.Description}" TextColor="#adadb8"
+                           FontSize="13" IsVisible="{Binding Vod.Description, Converter={StaticResource NotNullConverter}}"
+                           Margin="0,4,0,0"/>
+                </VerticalStackLayout>
+
+                <!-- Resume progress bar -->
+                <Grid BackgroundColor="#1f1f23" Padding="14,10"
+                      IsVisible="{Binding ResumePosition, Converter={StaticResource GreaterThanZeroConverter}}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{Binding ResumePosition, StringFormat='▶ Продължи от {0:hh\\:mm\\:ss}'}"
+                               TextColor="#a970ff" FontSize="13" FontAttributes="Bold"/>
+                        <ProgressBar Progress="{Binding ResumePosition}"
+                                     ProgressColor="#a970ff" BackgroundColor="#26262c"/>
+                    </VerticalStackLayout>
+                </Grid>
+
+                <BoxView HeightRequest="8" BackgroundColor="#0e0e10"/>
+
+                <!-- Comments section -->
+                <VerticalStackLayout Padding="14,12" Spacing="12">
+                    <Label Text="Коментари" TextColor="#efeff1"
+                           FontSize="15" FontAttributes="Bold"/>
+
+                    <!-- Comment input -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8"
+                          IsVisible="{Binding AccessToken, Converter={StaticResource NotNullConverter}}">
+                        <Border Grid.Column="0" BackgroundColor="#18181b"
+                                Stroke="#26262c" StrokeShape="RoundRectangle 8">
+                            <Entry Placeholder="Напиши коментар..."
+                                   PlaceholderColor="#5a5a6a"
+                                   TextColor="#efeff1"
+                                   BackgroundColor="Transparent"
+                                   Margin="8,0"/>
+                        </Border>
+                        <Button Grid.Column="1" Text="↑"
+                                BackgroundColor="#a970ff" TextColor="White"
+                                CornerRadius="8" WidthRequest="44" HeightRequest="44"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

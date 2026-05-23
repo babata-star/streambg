@@ -1,0 +1,22 @@
+# ─── nginx-rtmp + FFmpeg for ABR live transcoding ─────────────────────────────
+# Extends the official tiangolo/nginx-rtmp image with FFmpeg so the exec
+# directive in nginx.conf can spawn the abr-transcode.sh script directly
+# inside the container.
+FROM tiangolo/nginx-rtmp
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ffmpeg \
+ && rm -rf /var/lib/apt/lists/*
+
+# Bake the ABR script into the image and make it executable.
+# The docker-compose bind-mount overrides this in dev, but when deploying
+# via the built image the script is already present and executable.
+COPY nginx/abr-transcode.sh /etc/nginx/abr-transcode.sh
+RUN chmod +x /etc/nginx/abr-transcode.sh
+
+# Wrapper entrypoint: re-applies +x after any bind-mount override, then
+# hands off to the upstream image's start script.
+RUN printf '#!/bin/sh\nchmod +x /etc/nginx/abr-transcode.sh 2>/dev/null || true\nexec /start.sh "$@"\n' \
+    > /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]

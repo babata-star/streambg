@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:pages="clr-namespace:StreamBG.Mobile.Pages"
+       x:Class="StreamBG.Mobile.AppShell"
+       BackgroundColor="#0e0e10"
+       Shell.NavBarIsVisible="True"
+       Shell.TabBarBackgroundColor="#18181b"
+       Shell.TabBarForegroundColor="#a970ff"
+       Shell.TabBarUnselectedColor="#5a5a6a"
+       Shell.TabBarTitleColor="#efeff1">
+
+    <!-- Tab bar navigation -->
+    <TabBar x:Name="MainTabs" Route="main">
+        <Tab Title="Начало" Icon="home.png">
+            <ShellContent Route="home" ContentTemplate="{DataTemplate pages:HomePage}"/>
+        </Tab>
+        <Tab Title="Клипове" Icon="clips.png">
+            <ShellContent Route="clips" ContentTemplate="{DataTemplate pages:ClipPage}"/>
+        </Tab>
+        <Tab Title="Търси" Icon="search.png">
+            <ShellContent Route="search" ContentTemplate="{DataTemplate pages:SearchPage}"/>
+        </Tab>
+        <Tab Title="Профил" Icon="profile.png">
+            <ShellContent Route="profile" ContentTemplate="{DataTemplate pages:ProfilePage}"/>
+        </Tab>
+    </TabBar>
+
+    <!-- Auth route (outside tab bar) -->
+    <ShellContent Route="auth" ContentTemplate="{DataTemplate pages:AuthPage}"
+                  Shell.NavBarIsVisible="False"/>
+
+</Shell>

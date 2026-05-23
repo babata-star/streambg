@@ -1,0 +1,117 @@
+.layout {
+  display: flex;
+  height: calc(100vh - var(--nav-h));
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.loading, .notFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - var(--nav-h));
+  gap: 16px;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.notFoundIcon { font-size: 56px; }
+.notFound h2 { font-size: 22px; font-weight: 700; color: var(--text-primary); }
+
+.info {
+  padding: 16px 20px 24px;
+}
+
+.streamerRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.streamerInfo { flex: 1; min-width: 0; }
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.username { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+
+.category {
+  font-size: 12px;
+  background: var(--accent-glow);
+  color: var(--accent);
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.liveIndicator {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700;
+  color: var(--live-red);
+  letter-spacing: 0.5px;
+}
+
+.liveDot {
+  width: 6px; height: 6px;
+  background: var(--live-red);
+  border-radius: 50%;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.actions { flex-shrink: 0; }
+
+.followBtn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 18px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 700;
+  transition: background 0.15s, transform 0.1s;
+}
+.followBtn:hover { background: var(--accent-dark); transform: translateY(-1px); }
+
+.description {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 700px;
+  padding-left: 62px;
+}

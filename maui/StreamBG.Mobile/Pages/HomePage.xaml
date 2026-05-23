@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StreamBG.Mobile.ViewModels"
+             xmlns:m="clr-namespace:StreamBG.Mobile.Models"
+             x:Class="StreamBG.Mobile.Pages.HomePage"
+             x:DataType="vm:HomeViewModel"
+             BackgroundColor="#0e0e10"
+             Title="">
+
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="Auto,*,Auto" Padding="4,0">
+            <!-- Logo -->
+            <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+                <Border BackgroundColor="#a970ff" StrokeShape="RoundRectangle 6" Padding="6,4">
+                    <Label Text="▶" TextColor="White" FontSize="14" FontAttributes="Bold"/>
+                </Border>
+                <Label Text="StreamBG" TextColor="#efeff1" FontSize="18" FontAttributes="Bold"
+                       VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <!-- Search button -->
+            <ImageButton Grid.Column="2" Source="search.png"
+                         BackgroundColor="Transparent" Padding="8"
+                         VerticalOptions="Center"/>
+        </Grid>
+    </Shell.TitleView>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <!-- Category chips -->
+        <CollectionView Grid.Row="0"
+                        ItemsSource="{Binding Categories}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedCategory}"
+                        HeightRequest="44"
+                        Margin="0,8,0,0">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <Border Padding="12,6"
+                            StrokeShape="RoundRectangle 999"
+                            Margin="4,0">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding .}" Value="Всички">
+                                <Setter Property="BackgroundColor" Value="#a970ff"/>
+                                <Setter Property="Stroke" Value="#a970ff"/>
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Label Text="{Binding .}" TextColor="#efeff1" FontSize="13"/>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Tab bar — Live / VOD -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="16,8">
+            <Button Grid.Column="0" Text="🔴  На живо"
+                    BackgroundColor="{Binding SelectedTab, Converter={StaticResource TabBgConverter}, ConverterParameter=0}"
+                    TextColor="#efeff1" FontSize="14" FontAttributes="Bold"
+                    CornerRadius="8" HeightRequest="40"
+                    Command="{Binding SelectTabCommand}"
+                    CommandParameter="0"/>
+            <Button Grid.Column="1" Text="📼  VOD"
+                    BackgroundColor="{Binding SelectedTab, Converter={StaticResource TabBgConverter}, ConverterParameter=1}"
+                    TextColor="#efeff1" FontSize="14" FontAttributes="Bold"
+                    CornerRadius="8" HeightRequest="40"
+                    Command="{Binding SelectTabCommand}"
+                    CommandParameter="1"/>
+        </Grid>
+
+        <!-- Content area -->
+        <RefreshView Grid.Row="2"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}">
+
+            <!-- LIVE grid -->
+            <CollectionView ItemsSource="{Binding LiveStreams}"
+                            IsVisible="{Binding SelectedTab, Converter={StaticResource EqualConverter}, ConverterParameter=0}"
+                            RemainingItemsThreshold="4"
+                            RemainingItemsThresholdReachedCommand="{Binding LoadMoreLiveCommand}"
+                            Margin="12,0">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:LiveStream">
+                        <Grid RowDefinitions="Auto,Auto" RowSpacing="0">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenStreamCommand}"
+                                    CommandParameter="{Binding .}"/>
+                            </Grid.GestureRecognizers>
+
+                            <!-- Thumbnail -->
+                            <Border Grid.Row="0" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+                                <Grid>
+                                    <Image Source="{Binding ThumbnailUrl}" Aspect="AspectFill" HeightRequest="120"/>
+
+                                    <!-- LIVE badge -->
+                                    <Border BackgroundColor="#eb0400" StrokeShape="RoundRectangle 4"
+                                            Padding="6,3" HorizontalOptions="Start" VerticalOptions="Start" Margin="6">
+                                        <Label Text="● НА ЖИВО" TextColor="White" FontSize="10" FontAttributes="Bold"/>
+                                    </Border>
+
+                                    <!-- Viewers -->
+                                    <Border BackgroundColor="#CC000000" StrokeShape="RoundRectangle 4"
+                                            Padding="6,3" HorizontalOptions="End" VerticalOptions="Start" Margin="6">
+                                        <Label Text="{Binding ViewerCount, StringFormat='👁 {0:N0}'}"
+                                               TextColor="White" FontSize="10"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <!-- Info -->
+                            <Grid Grid.Row="1" ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="0,6,0,0">
+                                <Border Grid.Column="0" BackgroundColor="#a970ff"
+                                        StrokeShape="RoundRectangle 999"
+                                        WidthRequest="30" HeightRequest="30">
+                                    <Label Text="{Binding Username, Converter={StaticResource InitialConverter}}"
+                                           TextColor="White" FontSize="12" FontAttributes="Bold"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                    <Label Text="{Binding Title}" TextColor="#efeff1"
+                                           FontSize="12" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation"/>
+                                    <Label Text="{Binding Username}" TextColor="#adadb8" FontSize="11"/>
+                                    <Border BackgroundColor="#33a970ff" StrokeShape="RoundRectangle 999"
+                                            Padding="6,1" IsVisible="{Binding Category, Converter={StaticResource NotNullConverter}}"
+                                            HorizontalOptions="Start">
+                                        <Label Text="{Binding Category}" TextColor="#a970ff" FontSize="10" FontAttributes="Bold"/>
+                                    </Border>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="12" Padding="40">
+                        <Label Text="📺" FontSize="48" HorizontalOptions="Center"/>
+                        <Label Text="Няма активни стриймове" TextColor="#adadb8"
+                               FontSize="16" FontAttributes="Bold" HorizontalOptions="Center"/>
+                        <Label Text="Провери по-късно" TextColor="#5a5a6a" FontSize="14" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+            <!-- VOD grid -->
+            <CollectionView ItemsSource="{Binding VodVideos}"
+                            IsVisible="{Binding SelectedTab, Converter={StaticResource EqualConverter}, ConverterParameter=1}"
+                            RemainingItemsThreshold="4"
+                            RemainingItemsThresholdReachedCommand="{Binding LoadMoreVodCommand}"
+                            Margin="12,0">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:VodVideo">
+                        <Grid RowDefinitions="Auto,Auto">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenVodCommand}"
+                                    CommandParameter="{Binding .}"/>
+                            </Grid.GestureRecognizers>
+                            <Border Grid.Row="0" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+                                <Grid>
+                                    <Image Source="{Binding ThumbnailUrl}" Aspect="AspectFill" HeightRequest="120"/>
+                                    <Border BackgroundColor="#CC000000" StrokeShape="RoundRectangle 4"
+                                            Padding="6,3" HorizontalOptions="End" VerticalOptions="End" Margin="6">
+                                        <Label Text="{Binding Duration, StringFormat='{0:hh\\:mm\\:ss}'}"
+                                               TextColor="White" FontSize="10"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <Grid Grid.Row="1" ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="0,6,0,0">
+                                <Border Grid.Column="0" BackgroundColor="#a970ff"
+                                        StrokeShape="RoundRectangle 999" WidthRequest="30" HeightRequest="30">
+                                    <Label Text="{Binding Username, Converter={StaticResource InitialConverter}}"
+                                           TextColor="White" FontSize="12" FontAttributes="Bold"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                    <Label Text="{Binding Title}" TextColor="#efeff1"
+                                           FontSize="12" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation"/>
+                                    <Label Text="{Binding Username}" TextColor="#adadb8" FontSize="11"/>
+                                    <Label Text="{Binding ViewCount, StringFormat='{0:N0} гледания'}"
+                                           TextColor="#5a5a6a" FontSize="10"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

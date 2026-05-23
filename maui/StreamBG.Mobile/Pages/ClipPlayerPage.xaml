@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vlc="clr-namespace:LibVLCSharp.MAUI;assembly=LibVLCSharp.MAUI"
+             xmlns:vm="clr-namespace:StreamBG.Mobile.ViewModels"
+             x:Class="StreamBG.Mobile.Pages.ClipPlayerPage"
+             x:DataType="vm:ClipPlayerViewModel"
+             BackgroundColor="#0e0e10"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ── Video player ─────────────────────────────────────────────────── -->
+        <Grid Grid.Row="0" HeightRequest="240" BackgroundColor="#000">
+            <vlc:VideoView x:Name="VideoView" MediaPlayer="{Binding MediaPlayer}"/>
+
+            <!-- Loading spinner -->
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               IsVisible="{Binding IsLoading}"
+                               Color="#a970ff"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+
+            <!-- Back button overlay -->
+            <Border BackgroundColor="#88000000" StrokeShape="RoundRectangle 8"
+                    Padding="10,6" HorizontalOptions="Start" VerticalOptions="Start" Margin="10">
+                <Label Text="←" TextColor="White" FontSize="18">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </Border>
+
+            <!-- Duration badge -->
+            <Border BackgroundColor="#88000000" StrokeShape="RoundRectangle 6"
+                    Padding="8,4" HorizontalOptions="End" VerticalOptions="End" Margin="10">
+                <Label Text="{Binding Clip.DurationSeconds, Converter={StaticResource SecondsToTimeConverter}}"
+                       TextColor="White" FontSize="13" FontAttributes="Bold"/>
+            </Border>
+        </Grid>
+
+        <!-- ── Clip info ────────────────────────────────────────────────────── -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="14,14" Spacing="14">
+
+                <!-- Title -->
+                <Label Text="{Binding Clip.Title}" TextColor="#efeff1"
+                       FontSize="18" FontAttributes="Bold"/>
+
+                <!-- Meta row -->
+                <HorizontalStackLayout Spacing="14">
+                    <Label Text="{Binding Clip.ViewCount, StringFormat='{0:N0} гледания'}"
+                           TextColor="#adadb8" FontSize="13"/>
+                    <Label Text="{Binding Clip.CreatedAt, StringFormat='{0:dd.MM.yyyy}'}"
+                           TextColor="#5a5a6a" FontSize="13"/>
+                </HorizontalStackLayout>
+
+                <BoxView HeightRequest="1" BackgroundColor="#26262c" Margin="0,4"/>
+
+                <!-- Streamer row -->
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Border Grid.Column="0" BackgroundColor="#a970ff"
+                            StrokeShape="RoundRectangle 999" WidthRequest="42" HeightRequest="42">
+                        <Label Text="{Binding Clip.StreamerUsername, Converter={StaticResource InitialConverter}}"
+                               TextColor="White" FontSize="15" FontAttributes="Bold"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                        <Label Text="{Binding Clip.StreamerUsername}" TextColor="#efeff1"
+                               FontSize="14" FontAttributes="Bold"/>
+                        <Label Text="Стриймър" TextColor="#5a5a6a" FontSize="12"/>
+                    </VerticalStackLayout>
+                </Grid>
+
+                <BoxView HeightRequest="1" BackgroundColor="#26262c" Margin="0,4"/>
+
+                <!-- Creator row -->
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Border Grid.Column="0" BackgroundColor="#26262c"
+                            StrokeShape="RoundRectangle 999" WidthRequest="36" HeightRequest="36">
+                        <Label Text="{Binding Clip.CreatorUsername, Converter={StaticResource InitialConverter}}"
+                               TextColor="#adadb8" FontSize="13"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                        <Label Text="{Binding Clip.CreatorUsername}" TextColor="#adadb8" FontSize="13"/>
+                        <Label Text="Направил клипа" TextColor="#5a5a6a" FontSize="11"/>
+                    </VerticalStackLayout>
+                </Grid>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

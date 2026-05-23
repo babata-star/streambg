@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vlc="clr-namespace:LibVLCSharp.MAUI;assembly=LibVLCSharp.MAUI"
+             xmlns:vm="clr-namespace:StreamBG.Mobile.ViewModels"
+             xmlns:m="clr-namespace:StreamBG.Mobile.Models"
+             x:Class="StreamBG.Mobile.Pages.StreamPage"
+             x:DataType="vm:StreamViewModel"
+             BackgroundColor="#0e0e10"
+             NavigationPage.HasNavigationBar="False">
+
+    <!-- Full-screen layout: video top, info + chat bottom -->
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ── Video player ──────────────────────────────────────── -->
+        <Grid Grid.Row="0" HeightRequest="240" BackgroundColor="#000000">
+            <vlc:VideoView x:Name="VideoView" MediaPlayer="{Binding MediaPlayer}"/>
+
+            <!-- Overlay: back button + live badge + viewers -->
+            <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,8" VerticalOptions="Start">
+                <Border Grid.Column="0" BackgroundColor="#88000000"
+                        StrokeShape="RoundRectangle 8" Padding="8,6">
+                    <Label Text="←" TextColor="White" FontSize="18">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Border>
+
+                <Border Grid.Column="1" BackgroundColor="#eb0400"
+                        StrokeShape="RoundRectangle 4" Padding="8,4"
+                        HorizontalOptions="Center" VerticalOptions="Start"
+                        IsVisible="{Binding Stream.IsLive}">
+                    <Label Text="● НА ЖИВО" TextColor="White" FontSize="11" FontAttributes="Bold"/>
+                </Border>
+
+                <Border Grid.Column="2" BackgroundColor="#88000000"
+                        StrokeShape="RoundRectangle 4" Padding="8,4">
+                    <Label Text="{Binding ViewerCount, StringFormat='👁 {0:N0}'}"
+                           TextColor="White" FontSize="11"/>
+                </Border>
+            </Grid>
+
+            <!-- Toggle chat button (bottom right) -->
+            <Border BackgroundColor="#88000000" StrokeShape="RoundRectangle 8"
+                    Padding="10,6" HorizontalOptions="End" VerticalOptions="End" Margin="10">
+                <Label TextColor="White" FontSize="12" FontAttributes="Bold">
+                    <Label.Text>
+                        <MultiBinding StringFormat="{}{0}">
+                            <Binding Path="IsChatVisible" Converter="{StaticResource BoolToStringConverter}"
+                                     ConverterParameter="💬 Скрий чата|💬 Покажи чата"/>
+                        </MultiBinding>
+                    </Label.Text>
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleChatCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </Border>
+        </Grid>
+
+        <!-- ── Stream info + Chat ────────────────────────────────── -->
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+
+            <!-- Stream info row -->
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="10"
+                  Padding="14,12" BackgroundColor="#18181b">
+                <Border Grid.Column="0" BackgroundColor="#a970ff"
+                        StrokeShape="RoundRectangle 999" WidthRequest="40" HeightRequest="40">
+                    <Label Text="{Binding Stream.Username, Converter={StaticResource InitialConverter}}"
+                           TextColor="White" FontSize="16" FontAttributes="Bold"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                    <Label Text="{Binding Stream.Title}" TextColor="#efeff1"
+                           FontSize="15" FontAttributes="Bold" MaxLines="1" LineBreakMode="TailTruncation"/>
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="{Binding Stream.Username}" TextColor="#adadb8" FontSize="12"/>
+                        <Border BackgroundColor="#33a970ff" StrokeShape="RoundRectangle 999"
+                                Padding="6,1" IsVisible="{Binding Stream.Category, Converter={StaticResource NotNullConverter}}">
+                            <Label Text="{Binding Stream.Category}" TextColor="#a970ff" FontSize="10" FontAttributes="Bold"/>
+                        </Border>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- Chat area -->
+            <Grid Grid.Row="1" RowDefinitions="*,Auto"
+                  BackgroundColor="#18181b"
+                  IsVisible="{Binding IsChatVisible}">
+
+                <!-- Messages list -->
+                <CollectionView Grid.Row="0"
+                                ItemsSource="{Binding Messages}"
+                                VerticalOptions="End"
+                                Margin="0,4,0,0">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="m:ChatMessage">
+                            <Grid Padding="12,3">
+                                <HorizontalStackLayout Spacing="0">
+                                    <Label Text="{Binding Username}"
+                                           TextColor="{Binding Color}"
+                                           FontSize="13" FontAttributes="Bold"/>
+                                    <Label Text=": " TextColor="#adadb8" FontSize="13"/>
+                                    <Label Text="{Binding Content}" TextColor="#efeff1"
+                                           FontSize="13" LineBreakMode="WordWrap"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Message input -->
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8"
+                      Padding="12,8" BackgroundColor="#1f1f23">
+                    <Border Grid.Column="0"
+                            BackgroundColor="#26262c"
+                            Stroke="#26262c"
+                            StrokeShape="RoundRectangle 8">
+                        <Entry Placeholder="Напиши в чата..."
+                               PlaceholderColor="#5a5a6a"
+                               TextColor="#efeff1"
+                               BackgroundColor="Transparent"
+                               Text="{Binding ChatInput}"
+                               MaxLength="500"
+                               ReturnCommand="{Binding SendMessageCommand}"
+                               IsEnabled="{Binding IsLoggedIn}"
+                               Margin="8,0"/>
+                    </Border>
+                    <Button Grid.Column="1"
+                            Text="↑"
+                            BackgroundColor="#a970ff"
+                            TextColor="White"
+                            FontSize="16" FontAttributes="Bold"
+                            CornerRadius="8"
+                            WidthRequest="44" HeightRequest="44"
+                            Command="{Binding SendMessageCommand}"
+                            IsEnabled="{Binding IsLoggedIn}"/>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StreamBG.Mobile.ViewModels"
+             x:Class="StreamBG.Mobile.Pages.AuthPage"
+             x:DataType="vm:AuthViewModel"
+             BackgroundColor="#0e0e10"
+             NavigationPage.HasNavigationBar="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="32,60,32,32" Spacing="0" VerticalOptions="Center">
+
+            <!-- Logo -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="0,0,0,40">
+                <Border BackgroundColor="#a970ff" StrokeShape="RoundRectangle 10" Padding="10,8">
+                    <Label Text="▶" TextColor="White" FontSize="20" FontAttributes="Bold"/>
+                </Border>
+                <Label Text="StreamBG" TextColor="#efeff1" FontSize="28"
+                       FontAttributes="Bold" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <!-- Heading -->
+            <Label Text="{Binding IsLoginMode, Converter={StaticResource BoolToStringConverter},
+                           ConverterParameter='Добре дошъл обратно|Създай акаунт'}"
+                   TextColor="#efeff1" FontSize="22" FontAttributes="Bold"
+                   HorizontalOptions="Center" Margin="0,0,0,6"/>
+
+            <Label Text="{Binding IsLoginMode, Converter={StaticResource BoolToStringConverter},
+                           ConverterParameter='Влез в профила си|Присъедини се към общността'}"
+                   TextColor="#adadb8" FontSize="14"
+                   HorizontalOptions="Center" Margin="0,0,0,28"/>
+
+            <!-- Error message -->
+            <Border BackgroundColor="#1Aeb0400" Stroke="#33eb0400"
+                    StrokeShape="RoundRectangle 8" Padding="12,10"
+                    Margin="0,0,0,16"
+                    IsVisible="{Binding ErrorMessage, Converter={StaticResource NotNullConverter}}">
+                <Label Text="{Binding ErrorMessage}" TextColor="#f87171" FontSize="13"/>
+            </Border>
+
+            <!-- Username (register only) -->
+            <VerticalStackLayout Spacing="6" Margin="0,0,0,14"
+                                 IsVisible="{Binding IsLoginMode, Converter={StaticResource InvertBoolConverter}}">
+                <Label Text="Потребителско име" TextColor="#adadb8" FontSize="12" FontAttributes="Bold"/>
+                <Border BackgroundColor="#1f1f23" Stroke="#26262c" StrokeShape="RoundRectangle 10">
+                    <Entry Text="{Binding Username}" Placeholder="cool_streamer"
+                           PlaceholderColor="#5a5a6a" TextColor="#efeff1"
+                           BackgroundColor="Transparent" Margin="12,0"/>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Email -->
+            <VerticalStackLayout Spacing="6" Margin="0,0,0,14">
+                <Label Text="Имейл" TextColor="#adadb8" FontSize="12" FontAttributes="Bold"/>
+                <Border BackgroundColor="#1f1f23" Stroke="#26262c" StrokeShape="RoundRectangle 10">
+                    <Entry Text="{Binding Email}" Placeholder="ti@example.com"
+                           Keyboard="Email"
+                           PlaceholderColor="#5a5a6a" TextColor="#efeff1"
+                           BackgroundColor="Transparent" Margin="12,0"/>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Password -->
+            <VerticalStackLayout Spacing="6" Margin="0,0,0,24">
+                <Label Text="Парола" TextColor="#adadb8" FontSize="12" FontAttributes="Bold"/>
+                <Border BackgroundColor="#1f1f23" Stroke="#26262c" StrokeShape="RoundRectangle 10">
+                    <Entry Text="{Binding Password}" Placeholder="••••••••"
+                           IsPassword="True"
+                           PlaceholderColor="#5a5a6a" TextColor="#efeff1"
+                           BackgroundColor="Transparent" Margin="12,0"/>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Submit button -->
+            <Button Text="{Binding IsLoginMode, Converter={StaticResource BoolToStringConverter},
+                           ConverterParameter='Вход|Регистрирай се'}"
+                    BackgroundColor="#a970ff"
+                    TextColor="White"
+                    FontSize="16" FontAttributes="Bold"
+                    CornerRadius="10" HeightRequest="52"
+                    Command="{Binding SubmitCommand}"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource InvertBoolConverter}}"
+                    Margin="0,0,0,20"/>
+
+            <!-- Loading indicator -->
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               Color="#a970ff"
+                               IsVisible="{Binding IsLoading}"
+                               HorizontalOptions="Center"/>
+
+            <!-- Toggle login/register -->
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+                <Label Text="{Binding IsLoginMode, Converter={StaticResource BoolToStringConverter},
+                               ConverterParameter='Нямаш акаунт?|Вече имаш акаунт?'}"
+                       TextColor="#adadb8" FontSize="13"/>
+                <Label Text="{Binding IsLoginMode, Converter={StaticResource BoolToStringConverter},
+                               ConverterParameter='Регистрирай се|Влез'}"
+                       TextColor="#a970ff" FontSize="13" FontAttributes="Bold">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleModeCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

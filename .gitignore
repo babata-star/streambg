@@ -1,0 +1,48 @@
+# ─── .NET ───────────────────────────────────────────
+bin/
+obj/
+*.csproj.user
+*.user
+*.suo
+*.sln.docstates
+*.nupkg
+[Dd]ebug/
+[Rr]elease/
+
+# ─── Node / Frontend ────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+
+# ─── MAUI ──────────────────────────────────────────
+maui/**/bin/
+maui/**/obj/
+*.apk
+*.aab
+*.ipa
+
+# ─── IDE ────────────────────────────────────────────
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── OS ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ─── Docker ─────────────────────────────────────────
+docker/.env
+docker/data/
+docker/volumes/
+
+# ─── Project artifacts ──────────────────────────────
+*.zip
+nul
+{src/
+{subscriptions,donations,notifications/
+{vod/
+
+# ─── Logs ───────────────────────────────────────────
+*.log

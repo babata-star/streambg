@@ -1,0 +1,86 @@
+.wrapper { padding: 20px; }
+.heading {
+  font-size: 16px; font-weight: 700; color: #efeff1;
+  margin-bottom: 16px; letter-spacing: -0.2px;
+}
+
+.loading { color: #5a5a6a; padding: 20px; font-size: 13px; }
+
+.activeBadge {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(169,112,255,0.12);
+  border: 1px solid rgba(169,112,255,0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 13px; font-weight: 600; color: #a970ff;
+}
+.months { font-size: 11px; color: #adadb8; }
+
+.plans {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plan {
+  position: relative;
+  background: #1f1f23;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 16px;
+  transition: border-color 0.2s;
+}
+.plan:hover { border-color: rgba(169,112,255,0.4); }
+
+.featured {
+  border-color: #a970ff;
+  background: linear-gradient(135deg, #1f1f23 0%, #22192e 100%);
+}
+
+.popularBadge {
+  position: absolute;
+  top: -10px; right: 12px;
+  background: #a970ff;
+  color: #fff;
+  font-size: 10px; font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.planHeader {
+  display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px;
+}
+.planEmoji { font-size: 22px; }
+.planName { font-size: 14px; font-weight: 700; color: #efeff1; }
+.planDesc { font-size: 12px; color: #adadb8; margin-top: 2px; }
+
+.price {
+  display: flex; align-items: baseline; gap: 4px;
+  margin-bottom: 12px;
+}
+.priceNum {
+  font-size: 26px; font-weight: 900; color: #efeff1; letter-spacing: -1px;
+}
+.pricePer { font-size: 12px; color: #5a5a6a; }
+
+.perks {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 14px;
+}
+.perks li { font-size: 12px; color: #adadb8; display: flex; align-items: center; gap: 7px; }
+.perkCheck { color: #00c853; font-size: 12px; font-weight: 700; }
+
+.subBtn {
+  width: 100%;
+  padding: 10px;
+  background: #a970ff;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 700;
+  transition: background 0.15s, transform 0.1s;
+}
+.subBtn:hover:not(:disabled) { background: #7c3aed; transform: translateY(-1px); }
+.subBtn:disabled { opacity: 0.55; cursor: not-allowed; }
+.subActive { background: #1f1f23; border: 1px solid #00c853; color: #00c853; }

@@ -1,0 +1,31 @@
+<!-- Добави в Platforms/iOS/Info.plist -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>NSCameraUsageDescription</key>
+    <string>StreamBG иска достъп до камерата за стриймване на живо</string>
+
+    <key>NSMicrophoneUsageDescription</key>
+    <string>StreamBG иска достъп до микрофона за стриймване на живо</string>
+
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>StreamBG се свързва с локалния стрийм сървър</string>
+
+    <key>UIRequiresFullScreen</key>
+    <true/>
+
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>audio</string>
+        <string>fetch</string>
+    </array>
+
+    <!-- Разреши HTTP (ако API-то не е HTTPS) -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+</dict>
+</plist>

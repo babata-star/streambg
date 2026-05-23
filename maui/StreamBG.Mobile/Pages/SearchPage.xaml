@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StreamBG.Mobile.ViewModels"
+             xmlns:m="clr-namespace:StreamBG.Mobile.Models"
+             x:Class="StreamBG.Mobile.Pages.SearchPage"
+             x:DataType="vm:SearchViewModel"
+             BackgroundColor="#0e0e10"
+             Title="Търсене">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Search bar -->
+        <Grid Grid.Row="0" Padding="12,10" BackgroundColor="#18181b">
+            <Border BackgroundColor="#26262c" Stroke="#26262c" StrokeShape="RoundRectangle 10">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="4">
+                    <Label Grid.Column="0" Text="🔍" FontSize="16"
+                           VerticalOptions="Center" Margin="12,0,0,0" TextColor="#5a5a6a"/>
+                    <Entry Grid.Column="1"
+                           Text="{Binding Query}"
+                           Placeholder="Търси стриймове, потребители, VOD..."
+                           PlaceholderColor="#5a5a6a" TextColor="#efeff1"
+                           BackgroundColor="Transparent"
+                           ReturnType="Search"
+                           ReturnCommand="{Binding SearchCommand}"
+                           Margin="4,0"/>
+                    <ActivityIndicator Grid.Column="2"
+                                       IsRunning="{Binding IsLoading}"
+                                       IsVisible="{Binding IsLoading}"
+                                       Color="#a970ff"
+                                       WidthRequest="24" HeightRequest="24"
+                                       Margin="0,0,10,0"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Results -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="0">
+
+                <!-- Empty / placeholder state -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="12" Padding="40,60"
+                                     IsVisible="{Binding HasResults, Converter={StaticResource InvertBoolConverter}}">
+                    <Label Text="🔍" FontSize="48" HorizontalOptions="Center"/>
+                    <Label Text="Потърси нещо" TextColor="#adadb8"
+                           FontSize="16" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Text="Въведи поне 2 символа" TextColor="#5a5a6a"
+                           FontSize="13" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <!-- Results sections — BindableLayout avoids nested scroll issues -->
+                <VerticalStackLayout IsVisible="{Binding HasResults}" Spacing="0">
+
+                    <!-- ── LIVE STREAMS ── -->
+                    <Label Text="НА ЖИВО" TextColor="#a970ff" FontSize="12" FontAttributes="Bold"
+                           Margin="14,14,14,8"
+                           IsVisible="{Binding Results.Streams.Count, Converter={StaticResource GreaterThanZeroConverter}}"/>
+
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Results.Streams}"
+                                         IsVisible="{Binding Results.Streams.Count, Converter={StaticResource GreaterThanZeroConverter}}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="m:LiveStream">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Padding="14,8">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenStreamCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Grid.GestureRecognizers>
+
+                                    <Border Grid.Column="0" StrokeShape="RoundRectangle 6"
+                                            StrokeThickness="0" WidthRequest="90" HeightRequest="60">
+                                        <Image Source="{Binding ThumbnailUrl}" Aspect="AspectFill"/>
+                                    </Border>
+
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                        <Label Text="{Binding Title}" TextColor="#efeff1"
+                                               FontSize="13" FontAttributes="Bold"
+                                               MaxLines="2" LineBreakMode="TailTruncation"/>
+                                        <Label Text="{Binding Username}" TextColor="#adadb8" FontSize="12"/>
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Border BackgroundColor="#eb0400" StrokeShape="RoundRectangle 4" Padding="5,2">
+                                                <Label Text="НА ЖИВО" TextColor="White"
+                                                       FontSize="10" FontAttributes="Bold"/>
+                                            </Border>
+                                            <Label Text="{Binding ViewerCount, StringFormat='👁 {0:N0}'}"
+                                                   TextColor="#5a5a6a" FontSize="11"/>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#26262c" Margin="14,4"
+                             IsVisible="{Binding Results.Streams.Count, Converter={StaticResource GreaterThanZeroConverter}}"/>
+
+                    <!-- ── STREAMERS ── -->
+                    <Label Text="СТРИЙМЪРИ" TextColor="#a970ff" FontSize="12" FontAttributes="Bold"
+                           Margin="14,10,14,8"
+                           IsVisible="{Binding Results.Users.Count, Converter={StaticResource GreaterThanZeroConverter}}"/>
+
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Results.Users}"
+                                         IsVisible="{Binding Results.Users.Count, Converter={StaticResource GreaterThanZeroConverter}}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="m:SearchUserResult">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="14,8">
+                                    <Border Grid.Column="0" BackgroundColor="#a970ff"
+                                            StrokeShape="RoundRectangle 999"
+                                            WidthRequest="40" HeightRequest="40">
+                                        <Label Text="{Binding Username, Converter={StaticResource InitialConverter}}"
+                                               TextColor="White" FontSize="15" FontAttributes="Bold"
+                                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                        <Label Text="{Binding Username}" TextColor="#efeff1"
+                                               FontSize="14" FontAttributes="Bold"/>
+                                        <Label Text="{Binding Bio}" TextColor="#adadb8" FontSize="12"
+                                               MaxLines="1" LineBreakMode="TailTruncation"
+                                               IsVisible="{Binding Bio, Converter={StaticResource NotNullConverter}}"/>
+                                    </VerticalStackLayout>
+                                    <Border Grid.Column="2" BackgroundColor="#eb0400"
+                                            StrokeShape="RoundRectangle 4" Padding="6,2"
+                                            VerticalOptions="Center"
+                                            IsVisible="{Binding IsLive}">
+                                        <Label Text="LIVE" TextColor="White" FontSize="10" FontAttributes="Bold"/>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#26262c" Margin="14,4"
+                             IsVisible="{Binding Results.Users.Count, Converter={StaticResource GreaterThanZeroConverter}}"/>
+
+                    <!-- ── VOD ── -->
+                    <Label Text="VOD" TextColor="#a970ff" FontSize="12" FontAttributes="Bold"
+                           Margin="14,10,14,8"
+                           IsVisible="{Binding Results.Vod.Count, Converter={StaticResource GreaterThanZeroConverter}}"/>
+
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Results.Vod}"
+                                         IsVisible="{Binding Results.Vod.Count, Converter={StaticResource GreaterThanZeroConverter}}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="m:VodVideo">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Padding="14,8">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenVodCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Grid.GestureRecognizers>
+
+                                    <Border Grid.Column="0" StrokeShape="RoundRectangle 6"
+                                            StrokeThickness="0" WidthRequest="90" HeightRequest="60">
+                                        <Grid>
+                                            <Image Source="{Binding ThumbnailUrl}" Aspect="AspectFill"/>
+                                            <Border BackgroundColor="#CC000000" StrokeShape="RoundRectangle 3"
+                                                    Padding="4,2" HorizontalOptions="End" VerticalOptions="End" Margin="4">
+                                                <Label Text="{Binding Duration, StringFormat='{0:hh\\:mm\\:ss}'}"
+                                                       TextColor="White" FontSize="9"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                        <Label Text="{Binding Title}" TextColor="#efeff1"
+                                               FontSize="13" FontAttributes="Bold"
+                                               MaxLines="2" LineBreakMode="TailTruncation"/>
+                                        <Label Text="{Binding Username}" TextColor="#adadb8" FontSize="12"/>
+                                        <Label Text="{Binding ViewCount, StringFormat='{0:N0} гледания'}"
+                                               TextColor="#5a5a6a" FontSize="11"/>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

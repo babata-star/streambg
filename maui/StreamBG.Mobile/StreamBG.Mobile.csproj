@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0-android;net8.0-ios</TargetFrameworks>
+    <RootNamespace>StreamBG.Mobile</RootNamespace>
+    <ApplicationId>bg.streambg.mobile</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationTitle>StreamBG</ApplicationTitle>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- App icon -->
+    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#a970ff" />
+    <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#0e0e10" BaseSize="128,128" />
+    <MauiFont Include="Resources\Fonts\*" />
+    <MauiImage Include="Resources\Images\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.5" />
+    <PackageReference Include="LibVLCSharp.MAUI" Version="3.1.0" />
+    <PackageReference Include="VideoLAN.LibVLC.Android" Version="3.6.0" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'" />
+    <PackageReference Include="VideoLAN.LibVLC.iOS" Version="3.4.0" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'" />
+  </ItemGroup>
+</Project>
