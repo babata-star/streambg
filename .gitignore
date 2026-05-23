@@ -39,10 +39,6 @@ docker/volumes/
 
 # ─── Project artifacts ──────────────────────────────
 *.zip
-nul
-{src/
-{subscriptions,donations,notifications/
-{vod/
 
 # ─── Logs ───────────────────────────────────────────
 *.log
