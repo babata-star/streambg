@@ -40,7 +40,7 @@
 ### 1. Клонирай проекта
 
 ```bash
-git clone https://github.com/your-org/streambg.git
+git clone https://github.com/babata-star/streambg.git
 cd streambg
 ```
 
