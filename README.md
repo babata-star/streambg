@@ -524,6 +524,4 @@ docker compose down -v
 docker compose up -d
 docker compose exec api dotnet ef database update
 ```
-#   s t r e a m b g - 
- 
- 
+
